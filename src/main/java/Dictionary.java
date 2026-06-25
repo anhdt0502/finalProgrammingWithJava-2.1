@@ -1,4 +1,4 @@
-import model.Word;
+import entity.Word;
 
 import java.io.Serializable;
 import java.util.ArrayList;

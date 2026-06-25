@@ -7,12 +7,11 @@ import java.nio.file.StandardCopyOption;
 
 public class AudioService {
 
-    private static final String AUDIO_FOLDER = "data/audio/";
+    private static final String AUDIO_FOLDER = "audio";
 
-    public String uploadAudio(String sourcePath, String word) {
+    public static String uploadAudio(String sourcePath, String word) throws Exception {
 
         try {
-
             File source = new File(sourcePath);
 
             if (!source.exists()) {

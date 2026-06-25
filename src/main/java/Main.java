@@ -1,35 +1,79 @@
-import model.DefinitionType;
+import controller.RequestController;
+import controller.RequestParser;
+import request.Request;
+
+import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        Menu menu = new Menu();
+        Scanner sc = new Scanner(System.in);
 
-        menu.run();
-        String input = scanner.nextLine();
+        RequestParser parser =
+                new RequestParser();
 
-        String[] arr = input.split("\\s+");
+        RequestController controller = new RequestController();
 
-        String option = arr[1];
 
-        String english = arr[2];
-        DefinitionType type = switch (option){
+        System.out.println("""
+                          lookup <word>
+                          define -a <word>
+                          define -n <word>
+                          define -v <word>
+                          define -p <word>
+                          define -s <word>
+                          drop <word>
+                          export <file>
+                          exit
+                             """);
 
-            case "--noun", "-n" -> DefinitionType.NOUN;
+        while (true) {
 
-            case "--verb", "-v" -> DefinitionType.VERB;
+            try {
 
-            case "--adjective", "-a" -> DefinitionType.ADJECTIVE;
 
-            case "--pronoun", "-p" -> DefinitionType.PRONOUN;
+                System.out.print("\nAction: ");
 
-            case "--synonymous", "-s" -> DefinitionType.SYNONYMOUS;
+                String input =
+                        sc.nextLine().trim();
 
-            default -> throw new IllegalArgumentException();
-        };
+                if (input.equalsIgnoreCase("exit")) {
 
+                    System.out.println("Program ended!");
+
+                    break;
+                }
+//                if (input.equalsIgnoreCase("help")) {
+//
+//                    System.out.println("""
+//                          lookup <word>
+//                          define -a <word>
+//                          define -n <word>
+//                          define -v <word>
+//                          define -p <word>
+//                          define -s <word>
+//                          drop <word>
+//                          export <file>
+//                          exit
+//                             """);
+//
+//                    continue;
+//                }
+
+
+                if (input.isBlank()) {
+                    continue;
+                }
+
+                Request request = parser.parse(input);
+
+                controller.execute(request);
+
+            } catch (Exception e) {
+
+                System.out.println("Error: " + e.getMessage());
+            }
+        }
     }
-
-
 }

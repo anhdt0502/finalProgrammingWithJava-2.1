@@ -1,87 +1,81 @@
 package service;
 
-import model.Definition;
-import model.Word;
+import entity.Word;
+import storage.FileStorage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class DictionaryService {
 
-    private List<Word> words = new ArrayList<>();
+    private static DictionaryService instance;
 
-    private AudioService audioService = new AudioService();
+    // Map để lookup O(1)
+    private Map<String, Word> dictionary;
+
+    private DictionaryService() {
+        dictionary = new LinkedHashMap<>();
+        loadDatabase();
+    }
+
+    private void loadDatabase() {
+
+        File folder =
+                new File("database");
+
+        File[] files =
+                folder.listFiles();
+
+        if(files == null) {
+            return;
+        }
+
+        FileStorage storage = new FileStorage();
+
+        for(File file : files) {
+
+            if(file.getName().endsWith(".def")) {
+
+                String keyword =
+                        file.getName()
+                                .replace(".def", "");
+
+                Word word =
+                        storage.load(keyword);
+
+                if(word != null) {
+
+                    dictionary.put(
+                            keyword,
+                            word);
+                }
+            }
+        }
+    }
+
+    public static DictionaryService getInstance() {
+
+        if (instance == null) {
+            instance = new DictionaryService();
+        }
+
+        return instance;
+    }
+
+    public Word find(String keyword) {
+        return dictionary.get(keyword.toLowerCase());
+    }
 
     public void addWord(Word word) {
-        words.add(word);
+        dictionary.put(word.getKeyword().toLowerCase(), word);
     }
 
-    public List<Word> getWords() {
-        return words;
+    public void drop(String keyword) {
+        dictionary.remove(keyword.toLowerCase());
     }
 
-    public Word findByEnglish(String english) {
-
-        for (Word word : words) {
-
-            if (word.getEnglish().equalsIgnoreCase(english)) {
-                return word;
-            }
-
-        }
-
-        return null;
+    public Map<String, Word> getDictionary() {
+        return dictionary;
     }
-
-    public boolean uploadAudio(String english, String sourcePath) {
-
-        Word word = findByEnglish(english);
-
-        if (word == null) {
-            return false;
-        }
-
-        String newPath =
-                audioService.uploadAudio(sourcePath, english);
-
-        if (newPath == null) {
-            return false;
-        }
-
-        word.setPronunciationFile(newPath);
-
-        return true;
-
-    }
-    public void defineWord(DefinitionType type,
-                           String english,
-                           String meaning,
-                           String sentence,
-                           String sentenceMeaning){
-
-        Word word = findWord(english);
-
-        if(word == null){
-
-            word = new Word(english);
-
-            words.add(word);
-
-            System.out.println("@"+english+
-                    " is not existed in database, created new one!");
-
-        }
-
-        Definition definition =
-                new Definition(type,
-                        meaning,
-                        sentence,
-                        sentenceMeaning);
-
-        word.addDefinition(definition);
-
-        System.out.println("Saved!");
-
-    }
-
 }
