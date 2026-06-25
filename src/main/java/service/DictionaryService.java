@@ -1,5 +1,6 @@
 package service;
 
+import model.Definition;
 import model.Word;
 
 import java.util.ArrayList;
@@ -50,6 +51,36 @@ public class DictionaryService {
         word.setPronunciationFile(newPath);
 
         return true;
+
+    }
+    public void defineWord(DefinitionType type,
+                           String english,
+                           String meaning,
+                           String sentence,
+                           String sentenceMeaning){
+
+        Word word = findWord(english);
+
+        if(word == null){
+
+            word = new Word(english);
+
+            words.add(word);
+
+            System.out.println("@"+english+
+                    " is not existed in database, created new one!");
+
+        }
+
+        Definition definition =
+                new Definition(type,
+                        meaning,
+                        sentence,
+                        sentenceMeaning);
+
+        word.addDefinition(definition);
+
+        System.out.println("Saved!");
 
     }
 

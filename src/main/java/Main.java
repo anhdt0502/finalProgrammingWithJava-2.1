@@ -1,69 +1,35 @@
-import java.util.Scanner;
+import model.DefinitionType;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-
         Menu menu = new Menu();
-        DictionaryManager manager = new DictionaryManager();
 
-        int choice;
+        menu.run();
+        String input = scanner.nextLine();
 
-        do {
+        String[] arr = input.split("\\s+");
 
-            menu.display();
+        String option = arr[1];
 
-            System.out.print("Choose an option (1-7): ");
+        String english = arr[2];
+        DefinitionType type = switch (option){
 
-            choice = scanner.nextInt();
-            scanner.nextLine();      // Xóa ký tự Enter
+            case "--noun", "-n" -> DefinitionType.NOUN;
 
-            switch (choice) {
+            case "--verb", "-v" -> DefinitionType.VERB;
 
-                case 1:
-                    System.out.println("== ADD ==");
-                    // manager.addWord();
-                    break;
+            case "--adjective", "-a" -> DefinitionType.ADJECTIVE;
 
-                case 2:
-                    System.out.println("== LOOKUP ==");
-                    // manager.lookup();
-                    break;
+            case "--pronoun", "-p" -> DefinitionType.PRONOUN;
 
-                case 3:
-                    System.out.println("== UPDATE ==");
-                    // manager.updateWord();
-                    break;
+            case "--synonymous", "-s" -> DefinitionType.SYNONYMOUS;
 
-                case 4:
-                    System.out.println("== DELETE ==");
-                    // manager.deleteWord();
-                    break;
+            default -> throw new IllegalArgumentException();
+        };
 
-                case 5:
-                    System.out.println("== SHOW ==");
-                    // manager.showAll();
-                    break;
-
-                case 6:
-                    System.out.println("== SAVE ==");
-                    // manager.save();
-                    break;
-
-                case 7:
-                    System.out.println("Goodbye!");
-                    break;
-
-                default:
-                    System.out.println("Invalid choice!");
-            }
-
-            System.out.println();
-
-        } while (choice != 7);
-
-        scanner.close();
     }
+
+
 }

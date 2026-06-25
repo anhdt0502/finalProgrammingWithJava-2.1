@@ -1,27 +1,38 @@
-import java.io.*;
+package service;
+
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
-public class AudioManager {
+public class AudioService {
 
-    public static String uploadAudio(String sourcePath) {
+    private static final String AUDIO_FOLDER = "data/audio/";
+
+    public String uploadAudio(String sourcePath, String word) {
 
         try {
 
             File source = new File(sourcePath);
 
             if (!source.exists()) {
-                System.out.println("File does not exist.");
+                System.out.println("Không tìm thấy file.");
                 return null;
             }
 
-            File folder = new File("audio");
+            File folder = new File(AUDIO_FOLDER);
 
             if (!folder.exists()) {
-                folder.mkdir();
+                folder.mkdirs();
             }
 
-            File destination = new File(folder, source.getName());
+            String fileName = source.getName();
+
+            String extension =
+                    fileName.substring(fileName.lastIndexOf("."));
+
+            File destination =
+                    new File(folder, word + extension);
 
             Files.copy(
                     source.toPath(),
@@ -32,9 +43,7 @@ public class AudioManager {
             return destination.getPath();
 
         } catch (IOException e) {
-
-            System.out.println("Upload failed!");
-
+            System.out.println("Upload thất bại.");
             return null;
         }
 

@@ -1,31 +1,46 @@
+package model;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Word implements Serializable {
-    private String word;
+
+    private String english;
+
     private String pronunciation;
-    private ArrayList<Meaning> meanings;
-    private ArrayList<String> synonyms;
-    private String audioPath;
+
+    private String audioFile;
+
+    private List<Definition> definitions =
+            new ArrayList<>();
+
     public Word() {
-        meanings = new ArrayList<>();
-        synonyms = new ArrayList<>();
-    }
-    public Word(String word, String pronunciation) {
-        this.word = word;
-        this.pronunciation = pronunciation;
-
-        meanings = new ArrayList<>();
-        synonyms = new ArrayList<>();
-
-
-    }
-    public String getAudioPath() {
-        return audioPath;
     }
 
-    public void setAudioPath(String audioPath) {
-        this.audioPath = audioPath;
+    public Word(String english) {
+        this.english = english;
+    }
+
+    public Word(String en, String vi) {
+    }
+
+    public String getEnglish() {
+        return english;
+    }
+
+    public void setEnglish(String english) {
+        this.english = english;
+    }
+
+    public List<Definition> getDefinitions() {
+        return definitions;
+    }
+
+    public void addDefinition(Definition definition){
+
+        definitions.add(definition);
+
     }
 
 }

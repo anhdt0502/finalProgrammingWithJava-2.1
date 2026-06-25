@@ -1,3 +1,5 @@
+import model.Word;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
