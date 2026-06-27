@@ -21,11 +21,9 @@ public class DictionaryService {
 
     private void loadDatabase() {
 
-        File folder =
-                new File("database");
+        File folder = new File("database");
 
-        File[] files =
-                folder.listFiles();
+        File[] files = folder.listFiles();
 
         if(files == null) {
             return;
@@ -37,18 +35,12 @@ public class DictionaryService {
 
             if(file.getName().endsWith(".def")) {
 
-                String keyword =
-                        file.getName()
-                                .replace(".def", "");
+                String keyword = file.getName().replace(".def", "");
 
-                Word word =
-                        storage.load(keyword);
+                Word word = storage.load(keyword);
 
                 if(word != null) {
-
-                    dictionary.put(
-                            keyword,
-                            word);
+                    dictionary.put(keyword, word);
                 }
             }
         }

@@ -15,28 +15,20 @@ public class DictionaryServiceTest {
                 DictionaryService
                         .getInstance();
 
-        Word word =
-                new Word("positive");
+        Word word = new Word("positive");
 
         service.addWord(word);
 
-        assertNotNull(
-                service.find(
-                        "positive"));
+        assertNotNull(service.find("positive"));
     }
 
     @Test
     public void testDropWord() {
 
-        DictionaryService service =
-                DictionaryService
-                        .getInstance();
+        DictionaryService service = DictionaryService.getInstance();
 
-        service.drop(
-                "positive");
+        service.drop("positive");
 
-        assertNull(
-                service.find(
-                        "positive"));
+        assertNull(service.find("positive"));
     }
 }

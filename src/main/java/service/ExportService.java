@@ -25,8 +25,7 @@ public class ExportService {
                     word.getDefinitions()) {
 
                 writer.write(
-                        "- "
-                                + def.getContent()
+                        "- " + def.getContent()
                                 + "\n");
             }
 
