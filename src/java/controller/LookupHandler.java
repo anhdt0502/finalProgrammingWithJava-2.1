@@ -5,8 +5,9 @@ import entity.PronunciationDefinition;
 import entity.Word;
 import request.Request;
 import service.AudioPlayer;
-import service.DictionaryService;
+import service.SearchService;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class LookupHandler implements ActionHandler {
@@ -14,29 +15,21 @@ public class LookupHandler implements ActionHandler {
     @Override
     public void handle(Request request) {
 
-        DictionaryService
-                .getInstance()
-                .lookup(request.getKeyword());
+        SearchService searchService = SearchService.getInstance();
 
-        Scanner scanner =
-                new Scanner(System.in);
+        List<Word> result = searchService.search(request.getKeyword());
 
-        System.out.print(
-                "Press P to play pronunciation (other key to exit): ");
+        if (result.isEmpty()) {
 
-        String input =
-                scanner.nextLine();
-
-        if (!input.equalsIgnoreCase("P")) {
+            System.out.println("Not found!");
 
             return;
 
         }
 
-        Word word =
-                DictionaryService
-                        .getInstance()
-                        .find(request.getKeyword());
+        searchService.showResult(result);
+
+        Word word = searchService.choose(result);
 
         if (word == null) {
 
@@ -44,18 +37,58 @@ public class LookupHandler implements ActionHandler {
 
         }
 
-        if (word.getAudioFile() == null
-                || word.getAudioFile().isBlank()) {
+        System.out.println();
+        System.out.println(word);
 
-            System.out.println(
-                    "Audio not found.");
+        PronunciationDefinition pronunciation = getPronunciation(word);
+
+        if (pronunciation == null
+                || pronunciation.getAudioPath() == null
+                || pronunciation.getAudioPath().isBlank()) {
 
             return;
 
         }
 
-        AudioPlayer.play(
-                word.getAudioFile());
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Press P to play pronunciation (Enter to skip): ");
+
+        String input = scanner.nextLine().trim();
+
+        if (!input.equalsIgnoreCase("P")) {
+
+            return;
+
+        }
+
+        boolean success =
+                AudioPlayer.play(pronunciation.getAudioPath());
+
+        if (!success) {
+
+            System.out.println("Cannot play audio.");
+
+        }
+
+    }
+
+    /**
+     * Lấy định nghĩa phát âm.
+     */
+    private PronunciationDefinition getPronunciation(Word word) {
+
+        for (Definition definition : word.getDefinitions()) {
+
+            if (definition instanceof PronunciationDefinition pronunciation) {
+
+                return pronunciation;
+
+            }
+
+        }
+
+        return null;
 
     }
 

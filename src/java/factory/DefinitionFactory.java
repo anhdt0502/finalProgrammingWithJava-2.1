@@ -1,16 +1,19 @@
 package factory;
 
-import entity.AdjectiveDefinition;
-import entity.Definition;
-import entity.DefinitionType;
-import entity.NounDefinition;
-import entity.PronunciationDefinition;
-import entity.SynonymousDefinition;
-import entity.VerbDefinition;
+import entity.*;
 
-public final class DefinitionFactory {
+public class DefinitionFactory {
 
     private DefinitionFactory() {
+    }
+
+    public static Definition create(
+            DefinitionType type,
+            String content,
+            String sentence,
+            String meaning) {
+
+        return create(type, content, sentence, meaning, null);
 
     }
 
@@ -18,22 +21,26 @@ public final class DefinitionFactory {
             DefinitionType type,
             String content,
             String sentence,
-            String sentenceMeaning) {
+            String meaning,
+            String audioPath) {
 
         switch (type) {
 
             case PRONOUN:
 
-                return new PronunciationDefinition(
-                        content
-                );
+                PronunciationDefinition pronunciation =
+                        new PronunciationDefinition(content);
+
+                pronunciation.setAudioPath(audioPath);
+
+                return pronunciation;
 
             case NOUN:
 
                 return new NounDefinition(
                         content,
                         sentence,
-                        sentenceMeaning
+                        meaning
                 );
 
             case ADJECTIVE:
@@ -41,7 +48,7 @@ public final class DefinitionFactory {
                 return new AdjectiveDefinition(
                         content,
                         sentence,
-                        sentenceMeaning
+                        meaning
                 );
 
             case VERB:
@@ -49,19 +56,17 @@ public final class DefinitionFactory {
                 return new VerbDefinition(
                         content,
                         sentence,
-                        sentenceMeaning
+                        meaning
                 );
 
             case SYNONYMOUS:
 
-                return new SynonymousDefinition(
-                        content
-                );
+                return new SynonymousDefinition(content);
 
             default:
 
                 throw new IllegalArgumentException(
-                        "Unknown Definition Type."
+                        "Unknown definition type."
                 );
 
         }

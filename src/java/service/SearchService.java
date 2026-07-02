@@ -5,6 +5,7 @@ import entity.DefinitionType;
 import entity.Word;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,9 +15,13 @@ public class SearchService {
 
     private final DictionaryService dictionaryService;
 
+    private final Scanner scanner;
+
     private SearchService() {
 
         dictionaryService = DictionaryService.getInstance();
+
+        scanner = new Scanner(System.in);
 
     }
 
@@ -37,15 +42,15 @@ public class SearchService {
      */
     public List<Word> search(String keyword) {
 
-        List<Word> result = new ArrayList<>();
-
         if (keyword == null || keyword.isBlank()) {
 
-            return result;
+            return Collections.emptyList();
 
         }
 
-        keyword = keyword.toLowerCase();
+        keyword = keyword.trim().toLowerCase();
+
+        List<Word> result = new ArrayList<>();
 
         for (Word word : dictionaryService.getAllWords()) {
 
@@ -62,11 +67,11 @@ public class SearchService {
     }
 
     /**
-     * Hiển thị danh sách kết quả.
+     * Hiển thị kết quả tìm kiếm.
      */
     public void showResult(List<Word> words) {
 
-        if (words.isEmpty()) {
+        if (words == null || words.isEmpty()) {
 
             System.out.println("Not found!");
 
@@ -74,15 +79,15 @@ public class SearchService {
 
         }
 
-        System.out.println("Result:");
+        System.out.println("\nResult:");
 
-        int index = 1;
+        for (int i = 0; i < words.size(); i++) {
 
-        for (Word word : words) {
+            Word word = words.get(i);
 
             System.out.printf(
-                    "%d. %s - %s%n",
-                    index++,
+                    "%d. %s (%s)%n",
+                    i + 1,
                     word.getKeyword(),
                     getMainType(word)
             );
@@ -92,28 +97,25 @@ public class SearchService {
     }
 
     /**
-     * Người dùng chọn kết quả.
+     * Người dùng chọn một kết quả.
      */
     public Word choose(List<Word> words) {
 
-        if (words.isEmpty()) {
+        if (words == null || words.isEmpty()) {
 
             return null;
 
         }
 
-        Scanner scanner = new Scanner(System.in);
-
         while (true) {
 
             System.out.print("Choose (0 to cancel): ");
 
+            String input = scanner.nextLine().trim();
+
             try {
 
-                int choice =
-                        Integer.parseInt(
-                                scanner.nextLine()
-                        );
+                int choice = Integer.parseInt(input);
 
                 if (choice == 0) {
 
@@ -121,8 +123,7 @@ public class SearchService {
 
                 }
 
-                if (choice >= 1
-                        && choice <= words.size()) {
+                if (choice >= 1 && choice <= words.size()) {
 
                     return words.get(choice - 1);
 
@@ -141,52 +142,31 @@ public class SearchService {
     }
 
     /**
-     * Lấy loại định nghĩa đầu tiên để hiển thị.
+     * Lấy loại định nghĩa đầu tiên.
      */
     private String getMainType(Word word) {
 
-        if (word.getDefinitions().isEmpty()) {
+        if (word == null || word.getDefinitions().isEmpty()) {
 
             return "Unknown";
 
         }
 
-        Definition definition =
-                word.getDefinitions().get(0);
+        Definition definition = word.getDefinitions().getFirst();
 
-        return getTypeName(
-                definition.getType()
-        );
+        return switch (definition.getType()) {
 
-    }
+            case PRONOUN -> "Pronunciation";
 
-    /**
-     * Chuyển DefinitionType sang chuỗi hiển thị.
-     */
-    private String getTypeName(
-            DefinitionType type) {
+            case NOUN -> "Noun";
 
-        switch (type) {
+            case ADJECTIVE -> "Adjective";
 
-            case PRONOUN:
-                return "Pronunciation";
+            case VERB -> "Verb";
 
-            case NOUN:
-                return "Noun";
+            case SYNONYMOUS -> "Synonymous";
 
-            case ADJECTIVE:
-                return "Adjective";
-
-            case VERB:
-                return "Verb";
-
-            case SYNONYMOUS:
-                return "Synonymous";
-
-            default:
-                return "Unknown";
-
-        }
+        };
 
     }
 

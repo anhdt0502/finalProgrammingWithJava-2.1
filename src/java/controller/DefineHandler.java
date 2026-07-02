@@ -10,13 +10,13 @@ import java.util.Scanner;
 public class DefineHandler implements ActionHandler {
 
     private final DictionaryService dictionaryService;
-
+    private final AudioService audioService;
     private final Scanner scanner;
 
     public DefineHandler() {
 
         dictionaryService = DictionaryService.getInstance();
-
+        audioService = AudioService.getInstance();
         scanner = new Scanner(System.in);
 
     }
@@ -32,157 +32,213 @@ public class DefineHandler implements ActionHandler {
 
         }
 
-        String option = request.getParams().get(0);
+        DefinitionType type = parseType(request.getParams().get(0));
 
-        DefinitionType type;
+        if (type == null) {
 
-        switch (option) {
+            System.out.println("Unknown definition type!");
 
-            case "-p":
-            case "--pronoun":
-                type = DefinitionType.PRONOUN;
-                break;
-
-            case "-n":
-            case "--noun":
-                type = DefinitionType.NOUN;
-                break;
-
-            case "-a":
-            case "--adjective":
-                type = DefinitionType.ADJECTIVE;
-                break;
-
-            case "-v":
-            case "--verb":
-                type = DefinitionType.VERB;
-                break;
-
-            case "-s":
-            case "--synonymous":
-                type = DefinitionType.SYNONYMOUS;
-                break;
-
-            default:
-
-                System.out.println("Unknown definition type!");
-
-                return;
+            return;
 
         }
 
-        String content;
-
+        String content = "";
         String sentence = "";
-
         String meaning = "";
 
         switch (type) {
 
-            case PRONOUN:
+            case PRONOUN -> {
 
                 System.out.print("Pronunciation: ");
 
                 content = scanner.nextLine();
 
-                dictionaryService.define(
-                        request.getKeyword(),
-                        type,
-                        content,
-                        "",
-                        ""
-                );
-
                 System.out.print("Audio file path (leave blank if none): ");
-                String path = scanner.nextLine();
 
-                if (!path.isBlank()) {
-                    AudioService.upload(request.getKeyword(), path);
+                String audioPath = scanner.nextLine();
+
+                boolean created =
+                        dictionaryService.define(
+
+                                request.getKeyword(),
+
+                                type,
+
+                                content,
+
+                                "",
+
+                                "",
+
+                                audioPath.isBlank() ? null : audioPath
+
+                        );
+
+                if (created) {
+
+                    System.out.println("@"
+                            + request.getKeyword()
+                            + " is not existed in database, created new one!");
+
                 }
+
+                System.out.println("Saved!");
 
                 return;
 
-            case SYNONYMOUS:
+            }
 
-                System.out.print("Synonymous: ");
+            case SYNONYMOUS -> {
 
-                content = scanner.nextLine();
+                boolean created = false;
 
-                break;
+                while (true) {
 
-            case NOUN:
+                    System.out.print("Synonymous (Enter to finish): ");
+
+                    String synonym = scanner.nextLine().trim();
+
+                    if (synonym.isBlank()) {
+                        break;
+                    }
+
+                    boolean isNew = dictionaryService.define(
+
+                            request.getKeyword(),
+
+                            DefinitionType.SYNONYMOUS,
+
+                            synonym,
+
+                            "",
+
+                            "",
+
+                            null
+
+                    );
+
+                    if (isNew) {
+                        created = true;
+                    }
+
+                }
+
+                if (created) {
+
+                    System.out.println("@"
+                            + request.getKeyword()
+                            + " is not existed in database, created new one!");
+
+                }
+
+                System.out.println("Saved!");
+
+                return;
+
+            }
+
+            case NOUN -> {
 
                 System.out.print("Noun definition: ");
-
                 content = scanner.nextLine();
 
                 System.out.print("Sentence (leave blank if none): ");
-
                 sentence = scanner.nextLine();
 
                 if (!sentence.isBlank()) {
 
                     System.out.print("Sentence meaning: ");
-
                     meaning = scanner.nextLine();
 
                 }
 
-                break;
+            }
 
-            case ADJECTIVE:
+            case ADJECTIVE -> {
 
                 System.out.print("Adjective definition: ");
-
                 content = scanner.nextLine();
 
                 System.out.print("Sentence (leave blank if none): ");
-
                 sentence = scanner.nextLine();
 
                 if (!sentence.isBlank()) {
 
                     System.out.print("Sentence meaning: ");
-
                     meaning = scanner.nextLine();
 
                 }
 
-                break;
+            }
 
-            case VERB:
+            case VERB -> {
 
                 System.out.print("Verb definition: ");
-
                 content = scanner.nextLine();
 
                 System.out.print("Sentence (leave blank if none): ");
-
                 sentence = scanner.nextLine();
 
                 if (!sentence.isBlank()) {
 
                     System.out.print("Sentence meaning: ");
-
                     meaning = scanner.nextLine();
 
                 }
 
-                break;
-
-            default:
-
-                return;
+            }
 
         }
 
-        dictionaryService.define(
+        boolean created = dictionaryService.define(
+
                 request.getKeyword(),
+
                 type,
+
                 content,
+
                 sentence,
-                meaning
+
+                meaning,
+
+                null
+
         );
+
+        if(created){
+
+            System.out.println("@"
+                    + request.getKeyword()
+                    + " is not existed in database, created new one!");
+
+        }
+
+        System.out.println("Saved!");
+
+
+
+    }
+
+    private DefinitionType parseType(String option) {
+
+        return switch (option) {
+
+            case "-p", "--pronoun" -> DefinitionType.PRONOUN;
+
+            case "-n", "--noun" -> DefinitionType.NOUN;
+
+            case "-a", "--adjective" -> DefinitionType.ADJECTIVE;
+
+            case "-v", "--verb" -> DefinitionType.VERB;
+
+            case "-s", "--synonymous" -> DefinitionType.SYNONYMOUS;
+
+            default -> null;
+
+        };
 
     }
 

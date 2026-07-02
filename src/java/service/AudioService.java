@@ -1,103 +1,52 @@
 package service;
 
-import entity.Word;
-
-import java.io.IOException;
+import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class AudioService {
 
+    private static AudioService instance;
+
     private static final String AUDIO_FOLDER = "audio";
 
-    static {
-
-        try {
-
-            Files.createDirectories(
-                    Paths.get(AUDIO_FOLDER));
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
+    private AudioService() {
+        File folder = new File(AUDIO_FOLDER);
+        if (!folder.exists()) {
+            folder.mkdirs();
         }
-
     }
 
-    public static void upload(
-            String keyword,
-            String sourcePath) {
+    public static AudioService getInstance() {
+        if (instance == null) {
+            instance = new AudioService();
+        }
+        return instance;
+    }
 
-        try {
+    /**
+     * Upload file mp3
+     */
+    public String uploadAudio(String sourcePath, String keyword) throws Exception {
 
-            Path source =
-                    Paths.get(sourcePath);
+        File source = new File(sourcePath);
 
-            if (!Files.exists(source)) {
-
-                System.out.println(
-                        "Audio file not found!");
-
-                return;
-
-            }
-
-            String extension = "";
-
-            String fileName =
-                    source.getFileName().toString();
-
-            int index =
-                    fileName.lastIndexOf(".");
-
-            if (index != -1) {
-
-                extension =
-                        fileName.substring(index);
-
-            }
-
-            Path target =
-                    Paths.get(
-                            AUDIO_FOLDER,
-                            keyword + extension
-                    );
-
-            Files.copy(
-                    source,
-                    target,
-                    java.nio.file.StandardCopyOption.REPLACE_EXISTING
-            );
-
-            DictionaryService service =
-                    DictionaryService.getInstance();
-
-            Word word =
-                    service.find(keyword);
-
-            if (word != null) {
-
-                word.setAudioFile(
-                        target.toString());
-
-                service.saveWord(word);
-
-            }
-
-            System.out.println(
-                    "Audio uploaded successfully.");
-
-        } catch (Exception e) {
-
-            System.out.println(
-                    "Upload failed!");
-
-            e.printStackTrace();
-
+        if (!source.exists()) {
+            throw new Exception("Audio file not found!");
         }
 
+        String extension = sourcePath.substring(sourcePath.lastIndexOf("."));
+
+        File destination = new File(AUDIO_FOLDER,
+                keyword.toLowerCase() + extension);
+
+        Files.copy(
+                source.toPath(),
+                destination.toPath(),
+                StandardCopyOption.REPLACE_EXISTING
+        );
+
+        return destination.getPath().replace("\\", "/");
     }
 
 }

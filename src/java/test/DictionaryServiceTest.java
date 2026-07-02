@@ -17,7 +17,7 @@ public class DictionaryServiceTest {
 
         Word word = new Word("positive");
 
-        service.addWord(word);
+        service.saveWord(word);
 
         assertNotNull(service.find("positive"));
     }
