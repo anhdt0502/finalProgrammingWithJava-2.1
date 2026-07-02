@@ -108,11 +108,7 @@ public class DictionaryService {
 
     }
 
-    /**
-     * Thêm một Definition.
-     *
-     * @return true nếu tạo Word mới.
-     */
+
     public boolean define(String keyword,
                           DefinitionType type,
                           String content,
@@ -158,9 +154,7 @@ public class DictionaryService {
 
     }
 
-    /**
-     * Xóa Word.
-     */
+
     public boolean drop(String keyword) {
 
         if (!containsWord(keyword)) {

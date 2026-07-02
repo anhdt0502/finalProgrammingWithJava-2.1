@@ -56,14 +56,35 @@ public class DefineHandler implements ActionHandler {
 
                 System.out.print("Audio file path (leave blank if none): ");
 
-                String audioPath = scanner.nextLine();
+                String audioPath = scanner.nextLine().trim();
+                String savedAudio = null;
+                if (!audioPath.isBlank()) {
 
-                boolean created =
-                        dictionaryService.define(
+                    try {
+
+                        savedAudio = audioService.uploadAudio(
+                                audioPath,
+                                request.getKeyword()
+                        );
+
+                        System.out.println("Audio uploaded!");
+
+                    } catch (Exception e) {
+
+                        System.out.println(e.getMessage());
+
+                        return;
+
+                    }
+
+                }
+
+
+                boolean created = dictionaryService.define(
 
                                 request.getKeyword(),
 
-                                type,
+                                DefinitionType.PRONOUN,
 
                                 content,
 
@@ -71,7 +92,7 @@ public class DefineHandler implements ActionHandler {
 
                                 "",
 
-                                audioPath.isBlank() ? null : audioPath
+                                savedAudio
 
                         );
 

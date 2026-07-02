@@ -9,12 +9,7 @@ public final class AudioPlayer {
     private AudioPlayer() {
     }
 
-    /**
-     * Phát file audio.
-     *
-     * @param filePath đường dẫn file mp3/wav...
-     * @return true nếu phát thành công
-     */
+
     public static boolean play(String filePath) {
 
         if (filePath == null || filePath.isBlank()) {
@@ -24,6 +19,7 @@ public final class AudioPlayer {
         File file = new File(filePath);
 
         if (!file.exists()) {
+            System.out.println("Audio file not found!");
             return false;
         }
 
@@ -48,6 +44,7 @@ public final class AudioPlayer {
             return true;
 
         } catch (IOException e) {
+            System.out.println("Cannot play audio!");
 
             return false;
 
