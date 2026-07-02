@@ -66,9 +66,7 @@ public class SearchService {
 
     }
 
-    /**
-     * Hiển thị kết quả tìm kiếm.
-     */
+
     public void showResult(List<Word> words) {
 
         if (words == null || words.isEmpty()) {
@@ -81,24 +79,21 @@ public class SearchService {
 
         System.out.println("\nResult:");
 
-        for (int i = 0; i < words.size(); i++) {
+        int index = 1;
 
-            Word word = words.get(i);
+        for (Word word : words) {
 
             System.out.printf(
-                    "%d. %s (%s)%n",
-                    i + 1,
-                    word.getKeyword(),
-                    getMainType(word)
+                    "%d. %s%n",
+                    index++,
+                    word.getKeyword()
             );
 
         }
 
     }
 
-    /**
-     * Người dùng chọn một kết quả.
-     */
+
     public Word choose(List<Word> words) {
 
         if (words == null || words.isEmpty()) {
@@ -141,9 +136,7 @@ public class SearchService {
 
     }
 
-    /**
-     * Lấy loại định nghĩa đầu tiên.
-     */
+
     private String getMainType(Word word) {
 
         if (word == null || word.getDefinitions().isEmpty()) {

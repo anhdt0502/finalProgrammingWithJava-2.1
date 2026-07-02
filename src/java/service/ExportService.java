@@ -55,9 +55,7 @@ public class ExportService {
 
             }
 
-            BufferedWriter writer =
-                    new BufferedWriter(
-                            new FileWriter(file));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 
             int total = words.size();
 
@@ -75,14 +73,11 @@ public class ExportService {
 
                 count++;
 
-                int current =
-                        count * 100 / total;
+                int current = count * 100 / total;
 
                 if (current >= percent) {
 
-                    System.out.print(
-                            percent + "%...");
-
+                    System.out.print(percent + "%...");
                     percent += 10;
 
                 }

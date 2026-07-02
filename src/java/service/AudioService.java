@@ -24,9 +24,7 @@ public class AudioService {
         return instance;
     }
 
-    /**
-     * Upload file mp3
-     */
+
     public String uploadAudio(String sourcePath, String keyword) throws Exception {
 
         File source = new File(sourcePath);

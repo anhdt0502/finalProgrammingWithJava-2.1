@@ -62,8 +62,7 @@ public class LookupHandler implements ActionHandler {
 
         }
 
-        boolean success =
-                AudioPlayer.play(pronunciation.getAudioPath());
+        boolean success = AudioPlayer.play(pronunciation.getAudioPath());
 
         if (!success) {
 
@@ -73,9 +72,7 @@ public class LookupHandler implements ActionHandler {
 
     }
 
-    /**
-     * Lấy định nghĩa phát âm.
-     */
+
     private PronunciationDefinition getPronunciation(Word word) {
 
         for (Definition definition : word.getDefinitions()) {
